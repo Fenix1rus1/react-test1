@@ -41,8 +41,8 @@
         #reaction-square {
             margin-left: auto;
             margin-right: auto;
-            width: 100px;
-            height: 100px;
+            width: 200px;
+            height: 200px;
             background-color: #3498db;
         }
 
@@ -113,7 +113,7 @@
                 testContainer.style.display = "block";
                 question.innerHTML = '<p>Подготовьтесь...</p>';
                 reactionButton.style.display = "block";
-                setTimeout(showReactionButton, Math.floor(Math.random() * 3000) + 2000); // Случайная задержка от 2 до 4 секунд
+                setTimeout(showReactionButton, Math.floor(Math.random() * 3000) + 1000); // Случайная задержка от 2 до 4 секунд
             }
         }
 
