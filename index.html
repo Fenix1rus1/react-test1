@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <title>Тест на реакцию</title>
@@ -7,11 +8,12 @@
         body {
             font-family: Arial, sans-serif;
             text-align: center;
-            /* background-color: #949494; */
         }
+
         h1 {
             color: #333;
         }
+
         .button {
             margin-left: auto;
             margin-right: auto;
@@ -23,24 +25,27 @@
             border: none;
             cursor: pointer;
         }
+
         #test-container {
             display: none;
             margin: 20px auto;
         }
+
         #question {
             margin-left: auto;
             margin-right: auto;
             font-size: 24px;
             margin-bottom: 20px;
         }
+
         #reaction-square {
             margin-left: auto;
             margin-right: auto;
             width: 100px;
             height: 100px;
             background-color: #3498db;
-
         }
+
         #reaction-time {
             min-height: 30px;
             margin-left: auto;
@@ -48,9 +53,9 @@
             font-size: 24px;
             margin-top: 20px;
             color: #27ae60;
-            
         }
-        .main-div{
+
+        .main-div {
             margin-top: 100px;
             background-color: #fff;
             margin-left: auto;
@@ -58,26 +63,35 @@
             border: 1px black solid;
             border-radius: 10px;
             min-height: 400px;
-            max-width: 400px;
+            max-width: 800px;
+        }
+
+        #chart {
+            max-height: 400px;
+            display: block;
+            margin: 20px auto;
+            max-width: 80%;
+            height: auto;
         }
     </style>
 </head>
+
 <body>
     <div class="main-div">
-            <h1>Тест на реакцию</h1>
-    <button id="start-button" class="button">Начать тест</button>
-    <div id="test-container">
-        <div id="question">
-            <p>Подготовьтесь...</p>
-            <div id="reaction-square"></div>
+        <h1>Тест на реакцию</h1>
+        <button id="start-button" class="button">Начать тест</button>
+        <div id="test-container">
+            <div id="question">
+                <p>Подготовьтесь...</p>
+                <div id="reaction-square"></div>
+            </div>
+            <button id="reaction-button" class="button">Нажми!</button>
+            <p id="reaction-time"></p>
+            <canvas id="chart"></canvas>
         </div>
-        <button id="reaction-button" class="button">Нажми!</button>
-        <p id="reaction-time"></p>
-        <div id="test-history"></div>
-        <p id="average-reaction-time"></p> <!-- Среднее значение -->
-    </div>
     </div>
 
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script>
         const startButton = document.querySelector("#start-button");
         const testContainer = document.querySelector("#test-container");
@@ -85,7 +99,7 @@
         const reactionButton = document.querySelector("#reaction-button");
         const reactionTimeDisplay = document.querySelector("#reaction-time");
         const reactionSquare = document.querySelector("#reaction-square");
-        const testHistoryDisplay = document.querySelector("#test-history");
+        const chartCanvas = document.querySelector("#chart");
 
         const testHistory = [];
         let isTestRunning = false;
@@ -95,7 +109,6 @@
 
         function startTest() {
             if (!isTestRunning) {
-                displayTestHistory();
                 startButton.style.display = "none";
                 testContainer.style.display = "block";
                 question.innerHTML = '<p>Подготовьтесь...</p>';
@@ -114,7 +127,7 @@
             }
         }
 
-        reactionButton.addEventListener("click", function() {
+        reactionButton.addEventListener("click", function () {
             if (isTestRunning) {
                 isTestRunning = false;
                 const endTime = new Date().getTime();
@@ -128,28 +141,57 @@
                 startButton.style.display = "block";
                 question.innerHTML = '<p>Готовы начать еще раз?</p>';
                 reactionSquare.style.backgroundColor = "#3498db"; // Восстановление цвета квадрата
+
+                // Обновляем график
+                updateChart();
             }
         });
 
-        function displayTestHistory() {
-            testHistoryDisplay.innerHTML = "<h2>История тестов:</h2>";
+        // Создаем график
+        const ctx = chartCanvas.getContext("2d");
+        const chart = new Chart(ctx, {
+            type: "line",
+            data: {
+                labels: [],
+                datasets: [{
+                    label: "Реакция (мс)",
+                    data: [],
+                    borderColor: "#27ae60",
+                    backgroundColor: "rgba(39, 174, 96, 0.2)",
+                    borderWidth: 2,
+                    pointRadius: 4,
+                    pointBackgroundColor: "#27ae60",
+                }],
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: {
+                            display: true,
+                            text: "Тесты",
+                        },
+                    },
+                    y: {
+                        title: {
+                            display: true,
+                            text: "Реакция (мс)",
+                        },
+                        beginAtZero: true,
+                    },
+                },
+            },
+        });
 
-            if (testHistory.length === 0) {
-                testHistoryDisplay.innerHTML += "<p>Нет результатов</p>";
-            } else {
-                testHistoryDisplay.innerHTML += "<ul>";
-                let sum = 0;
-                for (const time of testHistory) {
-                    testHistoryDisplay.innerHTML += `<li>${time}мс</li>`;
-                    sum += time;
-                }
-                const average = sum / testHistory.length;
-                testHistoryDisplay.innerHTML += "</ul>";
-
-                // Отображаем среднее значение
-                document.querySelector("#average-reaction-time").innerText = `Среднее значение: ${average.toFixed(2)}мс`;
-            }
+        // Добавляем результаты в график
+        function updateChart() {
+            const labels = testHistory.map((_, index) => `Тест ${index + 1}`);
+            chart.data.labels = labels;
+            chart.data.datasets[0].data = testHistory;
+            chart.update();
         }
     </script>
 </body>
+
 </html>
