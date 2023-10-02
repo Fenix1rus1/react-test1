@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <title>Тест на реакцию</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            /* background-color: #949494; */
+        }
+        h1 {
+            color: #333;
+        }
+        .button {
+            margin-left: auto;
+            margin-right: auto;
+            display: block;
+            padding: 10px 20px;
+            font-size: 18px;
+            background-color: #3498db;
+            color: #fff;
+            border: none;
+            cursor: pointer;
+        }
+        #test-container {
+            display: none;
+            margin: 20px auto;
+        }
+        #question {
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 24px;
+            margin-bottom: 20px;
+        }
+        #reaction-square {
+            margin-left: auto;
+            margin-right: auto;
+            width: 100px;
+            height: 100px;
+            background-color: #3498db;
+
+        }
+        #reaction-time {
+            min-height: 30px;
+            margin-left: auto;
+            margin-right: auto;
+            font-size: 24px;
+            margin-top: 20px;
+            color: #27ae60;
+            
+        }
+        .main-div{
+            margin-top: 100px;
+            background-color: #fff;
+            margin-left: auto;
+            margin-right: auto;
+            border: 1px black solid;
+            border-radius: 10px;
+            min-height: 400px;
+            max-width: 400px;
+        }
+    </style>
+</head>
+<body>
+    <div class="main-div">
+        <h1>Тест на реакцию</h1>
+    <button id="start-button" class="button">Начать тест</button>
+    <div id="test-container">
+        <div id="question">
+            <p>Подготовьтесь...</p>
+            <div id="reaction-square"></div>
+        </div>
+        <button id="reaction-button" class="button">Нажми!</button>
+        <p id="reaction-time"></p>
+        <div id="test-history"></div>
+    </div>
+    </div>
+    
+    <script>
+        const startButton = document.querySelector("#start-button");
+        const testContainer = document.querySelector("#test-container");
+        const question = document.querySelector("#question p");
+        const reactionButton = document.querySelector("#reaction-button");
+        const reactionTimeDisplay = document.querySelector("#reaction-time");
+        const reactionSquare = document.querySelector("#reaction-square");
+        const testHistoryDisplay = document.querySelector("#test-history");
+
+        const testHistory = [];
+        let isTestRunning = false;
+        let startTime;
+
+        startButton.addEventListener("click", startTest);
+
+        function startTest() {
+            if (!isTestRunning) {
+                displayTestHistory();
+                startButton.style.display = "none";
+                testContainer.style.display = "block";
+                question.innerHTML = '<p>Подготовьтесь...</p>';
+                reactionButton.style.display = "block";
+                setTimeout(showReactionButton, Math.floor(Math.random() * 3000) + 2000); // Случайная задержка от 2 до 4 секунд
+            }
+        }
+
+        function showReactionButton() {
+            if (!isTestRunning) {
+                isTestRunning = true;
+                question.innerHTML = '<p>Нажми сейчас!</p>';
+                reactionButton.style.display = "block";
+                startTime = new Date().getTime();
+                reactionSquare.style.backgroundColor = "#e74c3c"; // Изменение цвета квадрата на красный
+            }
+        }
+
+        reactionButton.addEventListener("click", function() {
+            if (isTestRunning) {
+                isTestRunning = false;
+                const endTime = new Date().getTime();
+                const reactionTime = endTime - startTime;
+                reactionTimeDisplay.innerText = "Ваша реакция: " + reactionTime + "мс";
+
+                // Сохраняем результат в историю тестов
+                testHistory.push(reactionTime);
+
+                reactionButton.style.display = "none";
+                startButton.style.display = "block";
+                question.innerHTML = '<p>Готовы начать еще раз?</p>';
+                reactionSquare.style.backgroundColor = "#3498db"; // Восстановление цвета квадрата
+            }
+        });
+
+        function displayTestHistory() {
+            testHistoryDisplay.innerHTML = "<h2>История тестов:</h2>";
+
+            if (testHistory.length === 0) {
+                testHistoryDisplay.innerHTML += "<p>Нет результатов</p>";
+            } else {
+                testHistoryDisplay.innerHTML += "<ul>";
+                for (const time of testHistory) {
+                    testHistoryDisplay.innerHTML += `<li>${time}мс</li>`;
+                }
+                testHistoryDisplay.innerHTML += "</ul>";
+            }
+        }
+    </script>
+</body>
+</html>
