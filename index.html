@@ -64,7 +64,7 @@
 </head>
 <body>
     <div class="main-div">
-        <h1>Тест на реакцию</h1>
+            <h1>Тест на реакцию</h1>
     <button id="start-button" class="button">Начать тест</button>
     <div id="test-container">
         <div id="question">
@@ -74,9 +74,10 @@
         <button id="reaction-button" class="button">Нажми!</button>
         <p id="reaction-time"></p>
         <div id="test-history"></div>
+        <p id="average-reaction-time"></p> <!-- Среднее значение -->
     </div>
     </div>
-    
+
     <script>
         const startButton = document.querySelector("#start-button");
         const testContainer = document.querySelector("#test-container");
@@ -137,10 +138,16 @@
                 testHistoryDisplay.innerHTML += "<p>Нет результатов</p>";
             } else {
                 testHistoryDisplay.innerHTML += "<ul>";
+                let sum = 0;
                 for (const time of testHistory) {
                     testHistoryDisplay.innerHTML += `<li>${time}мс</li>`;
+                    sum += time;
                 }
+                const average = sum / testHistory.length;
                 testHistoryDisplay.innerHTML += "</ul>";
+
+                // Отображаем среднее значение
+                document.querySelector("#average-reaction-time").innerText = `Среднее значение: ${average.toFixed(2)}мс`;
             }
         }
     </script>
